@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Indumai</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans p-6">
+
+  <h1 class="text-3xl font-bold mb-6 text-blue-700">Admin Panel - Contact Messages</h1>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mb-6">
+        {% for category, message in messages %}
+          <div class="bg-green-100 text-green-800 p-3 rounded mb-2">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Messages in Chat Bubbles -->
+  <div class="space-y-4">
+    {% for msg in messages %}
+      <div class="flex justify-start">
+        <div class="bg-white p-4 rounded-lg shadow-md w-full max-w-lg relative">
+          <div class="text-gray-800 font-semibold">{{ msg.name }} <span class="text-gray-500 text-sm">{{ msg.created_at }}</span></div>
+          <div class="mt-2 text-gray-700">{{ msg.message }}</div>
+          <form method="POST" action="{{ url_for('delete_message', msg_id=msg.id) }}" class="absolute top-2 right-2">
+            <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700 text-sm">
+              Delete
+            </button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+</body>
+</html>

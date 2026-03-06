@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - Indumai Seeds & Dairymart</title>
+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'poppins': ['Poppins', 'sans-serif'],
+            'playfair': ['Playfair Display', 'serif']
+          },
+          colors: {
+            'primary': '#2D5A27',
+            'secondary': '#F4A460',
+            'cream': '#FFF8DC'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html, body { height: 100%; margin: 0; }
+  </style>
+</head>
+
+<body class="bg-cream font-poppins">
+
+<!-- ================= NAVBAR ================= -->
+<nav class="fixed top-0 left-0 right-0 bg-primary shadow-lg z-40">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex items-center justify-between h-20">
+
+      <!-- Logo -->
+      <div class="flex items-center gap-3">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" class="h-12 w-auto object-contain">
+        <div>
+          <h1 class="text-white font-bold text-lg">Indumai</h1>
+          <p class="text-secondary text-xs">Seeds & Dairymart</p>
+        </div>
+      </div>
+
+      <!-- Desktop Menu -->
+      <div class="hidden md:flex gap-6">
+        <a href="{{ url_for('home') }}" class="text-white hover:text-secondary">Home</a>
+        <a href="{{ url_for('about') }}" class="text-white hover:text-secondary">About</a>
+        <a href="{{ url_for('products') }}" class="text-white hover:text-secondary">Products</a>
+        <a href="{{ url_for('gallery') }}" class="text-white hover:text-secondary">Gallery</a>
+        <a href="{{ url_for('contact') }}" class="text-secondary font-semibold">Contact</a>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<!-- ================= PAGE TITLE ================= -->
+<section class="pt-32 pb-12 text-center">
+  <h1 class="text-4xl md:text-5xl font-playfair text-primary mb-4">
+    Contact Us
+  </h1>
+  <p class="text-gray-600">
+    We'd love to hear from you. Reach out to us anytime!
+  </p>
+</section>
+
+<!-- ================= FLASH MESSAGE ================= -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="max-w-6xl mx-auto px-4 mb-6">
+      {% for category, message in messages %}
+        <div class="bg-green-100 text-green-800 p-4 rounded-lg border border-green-300 mb-3">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+<!-- ================= CONTACT SECTION ================= -->
+<section class="pb-20">
+  <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10">
+
+    <!-- Contact Form -->
+    <div class="bg-white p-8 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-semibold text-primary mb-6">Send Us a Message</h2>
+
+      <form action="{{ url_for('contact') }}" method="POST" class="space-y-4">
+        <input type="text" name="name" placeholder="Your Name"
+               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+
+        <input type="email" name="email" placeholder="Your Email"
+               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+
+        <textarea name="message" rows="4" placeholder="Your Message"
+                  class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required></textarea>
+
+        <button type="submit"
+                class="w-full bg-primary text-white py-3 rounded-lg hover:bg-green-800 transition">
+          Send Message
+        </button>
+      </form>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="space-y-6">
+
+      <div class="bg-white p-6 rounded-xl shadow-md">
+        <h3 class="text-xl font-semibold text-primary mb-2">📍 Address</h3>
+        <p class="text-gray-700">
+          Indumai Seeds & Dairymart Pvt Ltd<br>
+          Jalna, Maharashtra, India
+        </p>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-md">
+        <h3 class="text-xl font-semibold text-primary mb-2">📞 Phone</h3>
+        <p class="text-gray-700">+91 98765 43210</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-md">
+        <h3 class="text-xl font-semibold text-primary mb-2">✉ Email</h3>
+        <p class="text-gray-700">info@indumai.com</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= GOOGLE MAP ================= -->
+<section class="pb-20">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="rounded-xl overflow-hidden shadow-lg">
+      <iframe
+        src="https://www.google.com/maps?q=Jalna,Maharashtra&output=embed"
+        width="100%"
+        height="350"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="bg-primary text-white py-10">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h3 class="text-lg font-bold">Indumai Seeds & Dairymart</h3>
+    <p class="text-gray-300 mt-2">Growing Together, Prospering Forever</p>
+    <p class="text-gray-400 text-sm mt-4">
+      © 2024 Indumai. All rights reserved.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

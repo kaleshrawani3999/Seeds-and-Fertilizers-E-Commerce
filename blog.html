@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog - Indumai Seeds & Dairymart</title>
+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'poppins': ['Poppins', 'sans-serif'],
+            'playfair': ['Playfair Display', 'serif']
+          },
+          colors: {
+            'primary': '#2D5A27',
+            'secondary': '#F4A460',
+            'cream': '#FFF8DC'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html, body { height: 100%; margin: 0; }
+  </style>
+</head>
+
+<body class="bg-cream font-poppins">
+
+<!-- NAVBAR -->
+<nav class="fixed top-0 left-0 right-0 bg-primary shadow-lg z-40">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex items-center justify-between h-20">
+
+      <div class="flex items-center gap-3">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" class="h-12 w-auto object-contain">
+        <div>
+          <h1 class="text-white font-bold text-lg">Indumai</h1>
+          <p class="text-secondary text-xs">Seeds & Dairymart</p>
+        </div>
+      </div>
+
+      <div class="hidden md:flex gap-6">
+        <a href="{{ url_for('home') }}" class="text-white hover:text-secondary">Home</a>
+        <a href="{{ url_for('about') }}" class="text-white hover:text-secondary">About</a>
+        <a href="{{ url_for('products') }}" class="text-white hover:text-secondary">Products</a>
+        <a href="{{ url_for('gallery') }}" class="text-white hover:text-secondary">Gallery</a>
+        <a href="{{ url_for('blog') }}" class="text-secondary font-semibold">Blog</a>
+        <a href="{{ url_for('contact') }}" class="text-white hover:text-secondary">Contact</a>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<!-- TITLE -->
+<section class="pt-32 pb-12 text-center">
+  <h1 class="text-4xl md:text-5xl font-playfair text-primary mb-4">
+    Our Blog
+  </h1>
+  <p class="text-gray-600">
+    Farming Tips, Dairy Insights & Agricultural Knowledge
+  </p>
+</section>
+
+<!-- BLOG SECTION -->
+<section class="pb-20">
+  <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8">
+
+    <!-- Blog Card 1 -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <img src="{{ url_for('static', filename='images/farm.jpg') }}"
+           class="h-48 w-full object-cover">
+      <div class="p-6">
+        <h3 class="text-xl font-semibold text-primary mb-3">
+          Best Seeds for Summer Farming
+        </h3>
+        <p class="text-gray-600 mb-4">
+          Discover high-quality seeds that give better yield during summer season.
+        </p>
+        <button class="text-primary font-semibold hover:underline">
+          Read More →
+        </button>
+      </div>
+    </div>
+
+    <!-- Blog Card 2 -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <img src="{{ url_for('static', filename='images/farm.jpg') }}"
+           class="h-48 w-full object-cover">
+      <div class="p-6">
+        <h3 class="text-xl font-semibold text-primary mb-3">
+          Organic Fertilizers Guide
+        </h3>
+        <p class="text-gray-600 mb-4">
+          Learn how organic fertilizers improve soil quality and crop growth.
+        </p>
+        <button class="text-primary font-semibold hover:underline">
+          Read More →
+        </button>
+      </div>
+    </div>
+
+    <!-- Blog Card 3 -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <img src="{{ url_for('static', filename='images/farm.jpg') }}"
+           class="h-48 w-full object-cover">
+      <div class="p-6">
+        <h3 class="text-xl font-semibold text-primary mb-3">
+          Benefits of Fresh Dairy Products
+        </h3>
+        <p class="text-gray-600 mb-4">
+          Understand the nutritional benefits of farm-fresh dairy products.
+        </p>
+        <button class="text-primary font-semibold hover:underline">
+          Read More →
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-primary text-white py-10">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h3 class="text-lg font-bold">Indumai Seeds & Dairymart</h3>
+    <p class="text-gray-300 mt-2">Growing Together, Prospering Forever</p>
+    <p class="text-gray-400 text-sm mt-4">
+      © 2024 Indumai. All rights reserved.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

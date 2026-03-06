@@ -1,0 +1,729 @@
+
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indumai Seeds & Dairymart - Home</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          'poppins': ['Poppins', 'sans-serif'],
+          'playfair': ['Playfair Display', 'serif']
+        },
+        colors: {
+          'primary': '#2D5A27',
+          'secondary': '#F4A460',
+          'accent': '#8B4513',
+          'cream': '#FFF8DC',
+          'leaf': '#228B22'
+        },
+        keyframes: {
+          fadeInUp: {
+            '0%': { opacity: '0', transform: 'translateY(20px)' },
+            '100%': { opacity: '1', transform: 'translateY(0)' },
+          },
+          counterUp: {
+            '0%': { transform: 'scale(0.5)', opacity: '0' },
+            '100%': { transform: 'scale(1)', opacity: '1' },
+          }
+        },
+        animation: {
+          fadeInUp: 'fadeInUp 1s ease-out forwards',
+          counterUp: 'counterUp 1s ease-out forwards'
+        }
+      }
+    }
+  }
+</script>
+<style>
+html, body { height: 100%; margin: 0; scroll-behavior: smooth; }
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #F4A460;
+  transition: width 0.3s;
+}
+.nav-link:hover::after { width: 100%; }
+
+/* Hero carousel fade animation */
+.carousel-slide { opacity: 0; transition: opacity 1s ease-in-out; }
+.carousel-slide.active { opacity: 1; }
+
+/* Scroll to top button */
+#scrollTopBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #2D5A27;
+  color: #FFF;
+  padding: 12px 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: none;
+  z-index: 60;
+}
+</style>
+</head>
+<body class="h-full font-poppins bg-cream">
+<!-- Top Info Bar -->
+<div class="bg-secondary text-primary text-sm py-2 px-4 flex justify-between items-center">
+  <div>
+    📞 +91 9766722922 | ✉️ indumaiseeds@gmail.com
+  </div>
+  <div>
+    🕒 Mon - Sat : 9:00 AM - 7:00 PM
+  </div>
+</div>
+<!-- ================= NAVBAR ================= -->
+<nav class="fixed top-0 left-0 right-0 bg-primary shadow-lg z-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex items-center justify-between h-20">
+
+      <!-- Logo -->
+      <div class="flex items-center gap-3">
+        <img src="/static/images/logo.png" class="h-12 w-auto object-contain">
+        <div>
+          <h1 class="text-white font-bold text-lg">Indumai</h1>
+          <p class="text-secondary text-xs">Seeds & Dairymart</p>
+        </div>
+      </div>
+
+      <!-- Menu -->
+      <div class="hidden md:flex gap-6">
+        <a href="/" class="text-white hover:text-secondary">Home</a>
+        <a href="/about" class="text-white hover:text-secondary">About</a>
+        <a href="/products" class="text-white hover:text-secondary">Products</a>
+        <a href="/gallery" class="text-white hover:text-secondary">Gallery</a>
+        <a href="/blog" class="text-white hover:text-secondary">Blog</a>
+        <a href="/contact" class="text-white hover:text-secondary">Contact</a>
+      </div>
+
+      <!-- Right Side -->
+      <div class="flex items-center gap-6">
+
+        <!-- Cart -->
+        <a href="/cart" class="relative text-xl">
+  🛒
+  
+</a>
+<!-- Hamburger Button (Mobile) -->
+<button id="menu-btn" class="md:hidden text-3xl text-white">
+  ☰
+</button>
+</div>
+
+    </div>
+  </div>
+</nav>
+<!-- ================= HERO SECTION ================= -->
+<section id="home" class="relative h-screen overflow-hidden pt-20">
+  <div id="hero-carousel" class="relative h-full">
+    <div class="carousel-slide active absolute inset-0 bg-cover bg-center" 
+         style="background-image: url('/static/images/hero1.jpg');"></div>
+    <div class="carousel-slide absolute inset-0 bg-cover bg-center" 
+         style="background-image: url('/static/images/hero2.jpg');"></div>
+    <div class="carousel-slide absolute inset-0 bg-cover bg-center" 
+         style="background-image: url('/static/images/hero3.jpg');"></div>
+  </div>
+  <div class="absolute inset-0 bg-black/40"></div>
+  <div class="relative z-10 flex items-center justify-center h-full text-white text-center animate-fadeInUp">
+    <div>
+      <h1 class="text-5xl font-bold mb-4">Welcome to Indumai</h1>
+      <p class="text-xl mb-6">Seeds & Dairymart Pvt Ltd</p>
+      <a href="#products" class="inline-block mt-6 bg-secondary text-primary px-8 py-3 rounded-full font-semibold hover:scale-105 transition">Shop Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CATEGORY BUTTONS ================= -->
+<section class="py-10 bg-white">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h2 class="text-3xl font-playfair text-primary mb-6">Shop By Category</h2>
+    <div class="flex justify-center gap-4 flex-wrap">
+      <a href="#products?category=seeds" class="px-6 py-3 bg-green-600 text-white rounded-full hover:scale-105 transition">Seeds</a>
+      <a href="#products?category=fertilizers" class="px-6 py-3 bg-green-600 text-white rounded-full hover:scale-105 transition">Fertilizers</a>
+      <a href="#products?category=dairy" class="px-6 py-3 bg-green-600 text-white rounded-full hover:scale-105 transition">Dairy</a>
+      <a href="#products?category=fruits" class="px-6 py-3 bg-green-600 text-white rounded-full hover:scale-105 transition">Fruits</a>
+      <a href="#products?category=vegetables" class="px-6 py-3 bg-green-600 text-white rounded-full hover:scale-105 transition">Vegetables</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FEATURED PRODUCTS ================= -->
+<section id="products" class="py-16 bg-cream">
+  <div class="max-w-7xl mx-auto px-4">
+    
+    <h2 class="text-3xl font-playfair text-primary text-center mb-12">
+      Featured Products
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+
+      
+      <div class="bg-white shadow-lg rounded-xl p-4 hover:shadow-2xl transition duration-300">
+
+        <div class="overflow-hidden rounded-lg">
+          <img src="/static/images/TOMATO PKM-1.jpg" 
+               class="w-full h-48 object-cover hover:scale-110 transition duration-500">
+        </div>
+
+        <h3 class="text-lg font-semibold mt-3 text-primary">
+          Tomato Seeds
+        </h3>
+
+        <p class="text-green-700 font-bold mt-1 text-xl">
+          ₹299
+        </p>
+
+        <div class="flex gap-2 mt-4">
+
+<a href="/add_to_cart/1"
+   class="w-1/2 text-center bg-primary text-white py-2 rounded-lg hover:bg-green-800 transition">
+   Add
+</a>
+          <form action="/buy_now" method="POST" class="w-1/2">
+            <input type="hidden" name="product_id" value="1">
+            <button type="submit"
+              class="w-full bg-secondary text-primary py-2 rounded-lg hover:scale-105 transition">
+              Buy
+            </button>
+          </form>
+
+        </div>
+      </div>
+      
+      <div class="bg-white shadow-lg rounded-xl p-4 hover:shadow-2xl transition duration-300">
+
+        <div class="overflow-hidden rounded-lg">
+          <img src="/static/images/Wheat LOK-01.jpg" 
+               class="w-full h-48 object-cover hover:scale-110 transition duration-500">
+        </div>
+
+        <h3 class="text-lg font-semibold mt-3 text-primary">
+          Wheat Seeds
+        </h3>
+
+        <p class="text-green-700 font-bold mt-1 text-xl">
+          ₹450
+        </p>
+
+        <div class="flex gap-2 mt-4">
+
+<a href="/add_to_cart/2"
+   class="w-1/2 text-center bg-primary text-white py-2 rounded-lg hover:bg-green-800 transition">
+   Add
+</a>
+          <form action="/buy_now" method="POST" class="w-1/2">
+            <input type="hidden" name="product_id" value="2">
+            <button type="submit"
+              class="w-full bg-secondary text-primary py-2 rounded-lg hover:scale-105 transition">
+              Buy
+            </button>
+          </form>
+
+        </div>
+      </div>
+      
+      <div class="bg-white shadow-lg rounded-xl p-4 hover:shadow-2xl transition duration-300">
+
+        <div class="overflow-hidden rounded-lg">
+          <img src="/static/images/NPK.jpg" 
+               class="w-full h-48 object-cover hover:scale-110 transition duration-500">
+        </div>
+
+        <h3 class="text-lg font-semibold mt-3 text-primary">
+          NPK Fertilizer
+        </h3>
+
+        <p class="text-green-700 font-bold mt-1 text-xl">
+          ₹850
+        </p>
+
+        <div class="flex gap-2 mt-4">
+
+<a href="/add_to_cart/3"
+   class="w-1/2 text-center bg-primary text-white py-2 rounded-lg hover:bg-green-800 transition">
+   Add
+</a>
+          <form action="/buy_now" method="POST" class="w-1/2">
+            <input type="hidden" name="product_id" value="3">
+            <button type="submit"
+              class="w-full bg-secondary text-primary py-2 rounded-lg hover:scale-105 transition">
+              Buy
+            </button>
+          </form>
+
+        </div>
+      </div>
+      
+      <div class="bg-white shadow-lg rounded-xl p-4 hover:shadow-2xl transition duration-300">
+
+        <div class="overflow-hidden rounded-lg">
+          <img src="/static/images/Lady-finger.jpg" 
+               class="w-full h-48 object-cover hover:scale-110 transition duration-500">
+        </div>
+
+        <h3 class="text-lg font-semibold mt-3 text-primary">
+          Lady Finger
+        </h3>
+
+        <p class="text-green-700 font-bold mt-1 text-xl">
+          ₹450
+        </p>
+
+        <div class="flex gap-2 mt-4">
+
+<a href="/add_to_cart/4"
+   class="w-1/2 text-center bg-primary text-white py-2 rounded-lg hover:bg-green-800 transition">
+   Add
+</a>
+          <form action="/buy_now" method="POST" class="w-1/2">
+            <input type="hidden" name="product_id" value="4">
+            <button type="submit"
+              class="w-full bg-secondary text-primary py-2 rounded-lg hover:scale-105 transition">
+              Buy
+            </button>
+          </form>
+
+        </div>
+      </div>
+      
+      <div class="bg-white shadow-lg rounded-xl p-4 hover:shadow-2xl transition duration-300">
+
+        <div class="overflow-hidden rounded-lg">
+          <img src="/static/images/YELLOW MARIGOLD.jpg" 
+               class="w-full h-48 object-cover hover:scale-110 transition duration-500">
+        </div>
+
+        <h3 class="text-lg font-semibold mt-3 text-primary">
+          Yellow Marigold
+        </h3>
+
+        <p class="text-green-700 font-bold mt-1 text-xl">
+          ₹300
+        </p>
+
+        <div class="flex gap-2 mt-4">
+
+<a href="/add_to_cart/5"
+   class="w-1/2 text-center bg-primary text-white py-2 rounded-lg hover:bg-green-800 transition">
+   Add
+</a>
+          <form action="/buy_now" method="POST" class="w-1/2">
+            <input type="hidden" name="product_id" value="5">
+            <button type="submit"
+              class="w-full bg-secondary text-primary py-2 rounded-lg hover:scale-105 transition">
+              Buy
+            </button>
+          </form>
+
+        </div>
+      </div>
+      
+      <div class="bg-white shadow-lg rounded-xl p-4 hover:shadow-2xl transition duration-300">
+
+        <div class="overflow-hidden rounded-lg">
+          <img src="/static/images/Wheat Hi-1544.jpg" 
+               class="w-full h-48 object-cover hover:scale-110 transition duration-500">
+        </div>
+
+        <h3 class="text-lg font-semibold mt-3 text-primary">
+          Wheat HI-1544
+        </h3>
+
+        <p class="text-green-700 font-bold mt-1 text-xl">
+          ₹450
+        </p>
+
+        <div class="flex gap-2 mt-4">
+
+<a href="/add_to_cart/6"
+   class="w-1/2 text-center bg-primary text-white py-2 rounded-lg hover:bg-green-800 transition">
+   Add
+</a>
+          <form action="/buy_now" method="POST" class="w-1/2">
+            <input type="hidden" name="product_id" value="6">
+            <button type="submit"
+              class="w-full bg-secondary text-primary py-2 rounded-lg hover:scale-105 transition">
+              Buy
+            </button>
+          </form>
+
+        </div>
+      </div>
+      
+      <div class="bg-white shadow-lg rounded-xl p-4 hover:shadow-2xl transition duration-300">
+
+        <div class="overflow-hidden rounded-lg">
+          <img src="/static/images/watermelon.jpg" 
+               class="w-full h-48 object-cover hover:scale-110 transition duration-500">
+        </div>
+
+        <h3 class="text-lg font-semibold mt-3 text-primary">
+          Watermelon
+        </h3>
+
+        <p class="text-green-700 font-bold mt-1 text-xl">
+          ₹350
+        </p>
+
+        <div class="flex gap-2 mt-4">
+
+<a href="/add_to_cart/7"
+   class="w-1/2 text-center bg-primary text-white py-2 rounded-lg hover:bg-green-800 transition">
+   Add
+</a>
+          <form action="/buy_now" method="POST" class="w-1/2">
+            <input type="hidden" name="product_id" value="7">
+            <button type="submit"
+              class="w-full bg-secondary text-primary py-2 rounded-lg hover:scale-105 transition">
+              Buy
+            </button>
+          </form>
+
+        </div>
+      </div>
+      
+      <div class="bg-white shadow-lg rounded-xl p-4 hover:shadow-2xl transition duration-300">
+
+        <div class="overflow-hidden rounded-lg">
+          <img src="/static/images/Bottle Guard Samrat.jpg" 
+               class="w-full h-48 object-cover hover:scale-110 transition duration-500">
+        </div>
+
+        <h3 class="text-lg font-semibold mt-3 text-primary">
+          Bottle Guard Samrat
+        </h3>
+
+        <p class="text-green-700 font-bold mt-1 text-xl">
+          ₹450
+        </p>
+
+        <div class="flex gap-2 mt-4">
+
+<a href="/add_to_cart/8"
+   class="w-1/2 text-center bg-primary text-white py-2 rounded-lg hover:bg-green-800 transition">
+   Add
+</a>
+          <form action="/buy_now" method="POST" class="w-1/2">
+            <input type="hidden" name="product_id" value="8">
+            <button type="submit"
+              class="w-full bg-secondary text-primary py-2 rounded-lg hover:scale-105 transition">
+              Buy
+            </button>
+          </form>
+
+        </div>
+      </div>
+      
+
+    </div>
+  </div>
+</section>
+<!-- ================= ABOUT US ================= -->
+<section class="py-16 bg-white">
+  <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+
+    <div class="flex justify-center">
+      <img src="/static/images/farm.jpg"
+           class="rounded-xl shadow-lg w-full max-w-md h-80 object-cover">
+    </div>
+
+    <div>
+      <h2 class="text-3xl font-playfair text-primary mb-4">
+        About Indumai
+      </h2>
+
+      <p class="text-gray-700 mb-6">
+        Indumai Seeds & Dairymart is dedicated to providing high-quality seeds,
+        fertilizers, and fresh dairy products to farmers and families.
+      </p>
+
+      <a href="/about"
+         class="inline-block bg-secondary text-primary px-6 py-3 rounded-full font-semibold hover:scale-105 transition">
+        Read More
+      </a>
+    </div>
+
+  </div>
+</section>
+<!-- ================= ANIMATED COUNTERS ================= -->
+<section class="py-16 bg-cream">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h2 class="text-3xl font-playfair text-primary mb-10">Our Achievements</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-2xl font-bold text-primary">
+      <div>
+        <p class="counter" data-target="1000">0</p>
+        <span class="text-lg block mt-2 font-normal text-gray-700">Farmers Served</span>
+      </div>
+      <div>
+        <p class="counter" data-target="500">0</p>
+        <span class="text-lg block mt-2 font-normal text-gray-700">Products Sold</span>
+      </div>
+      <div>
+        <p class="counter" data-target="50">0</p>
+        <span class="text-lg block mt-2 font-normal text-gray-700">Happy Customers</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+<section class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h2 class="text-3xl font-playfair text-primary mb-10">What Our Customers Say</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white shadow-lg rounded-lg p-6 hover:shadow-2xl transition">
+        <p class="italic text-gray-700">"Best seeds I ever bought! My tomatoes grew amazingly."</p>
+        <h3 class="mt-4 font-bold text-primary">– Rajesh K.</h3>
+      </div>
+      <div class="bg-white shadow-lg rounded-lg p-6 hover:shadow-2xl transition">
+        <p class="italic text-gray-700">"Fresh milk delivered every morning. Highly recommended!"</p>
+        <h3 class="mt-4 font-bold text-primary">– Sneha P.</h3>
+      </div>
+      <div class="bg-white shadow-lg rounded-lg p-6 hover:shadow-2xl transition">
+        <p class="italic text-gray-700">"Organic fertilizers are top quality, my farm yield increased."</p>
+        <h3 class="mt-4 font-bold text-primary">– Manoj S.</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GALLERY ================= -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+
+  <div class="relative group">
+    <img src="/static/images/farm1.jpg" 
+         class="rounded-lg w-full h-56 object-cover">
+    <div class="absolute inset-0 bg-black/50 opacity-0 
+                group-hover:opacity-100 transition 
+                flex items-center justify-center 
+                text-white text-lg font-semibold">
+        Beautiful Flowers      
+    </div>
+  </div>
+
+  <div class="relative group">
+    <img src="/static/images/farm2.jpg" 
+         class="rounded-lg w-full h-56 object-cover">
+    <div class="absolute inset-0 bg-black/50 opacity-0 
+                group-hover:opacity-100 transition 
+                flex items-center justify-center 
+                text-white text-lg font-semibold">
+      Wheat
+    </div>
+  </div>
+
+  <div class="relative group">
+    <img src="/static/images/farm3.jpg" 
+         class="rounded-lg w-full h-56 object-cover">
+    <div class="absolute inset-0 bg-black/50 opacity-0 
+                group-hover:opacity-100 transition 
+                flex items-center justify-center 
+                text-white text-lg font-semibold">
+      Quality Seeds
+    </div>
+  </div>
+
+  <div class="relative group">
+    <img src="/static/images/farm4.jpg" 
+         class="rounded-lg w-full h-56 object-cover">
+    <div class="absolute inset-0 bg-black/50 opacity-0 
+                group-hover:opacity-100 transition 
+                flex items-center justify-center 
+                text-white text-lg font-semibold">
+Tomatos
+          </div>
+  </div>
+
+</div>
+<!-- ================= BLOG/NEWS ================= -->
+<section id="blog" class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h2 class="text-3xl font-playfair text-primary mb-10">Latest News & Tips</h2>
+    <div class="relative max-w-3xl mx-auto">
+  <div id="testimonial-slide" 
+       class="text-center text-lg text-gray-700 font-medium bg-gray-100 p-8 rounded-lg shadow-lg">
+    "Best seeds I ever bought! My tomatoes grew amazingly."
+    <div class="mt-4 font-bold text-primary">– Rajesh K.</div>
+  </div>
+</div>
+      <div class="bg-cream shadow-lg rounded-lg p-6 hover:scale-105 transition">
+        <h3 class="font-semibold mb-2">Milk Storage Best Practices</h3>
+        <p class="text-gray-700 text-sm">Keep your dairy fresh and hygienic with these simple milk storage tips.</p>
+      </div>
+      <div class="bg-cream shadow-lg rounded-lg p-6 hover:scale-105 transition">
+        <h3 class="font-semibold mb-2">Organic Fertilizer Benefits</h3>
+        <p class="text-gray-700 text-sm">Discover why using organic fertilizers boosts farm health and crop yield sustainably.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SOCIAL + CONTACT ================= -->
+<section id="contact" class="py-16 bg-cream">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h2 class="text-3xl font-playfair text-primary mb-6">Connect With Us</h2>
+    <p class="text-gray-700 mb-6">Follow us on social media or send a message directly!</p>
+    <div class="flex justify-center gap-8 text-3xl mb-10">
+      <a href="https://wa.me/919766722922" target="_blank" class="text-green-500 hover:scale-125 transition">
+        <i class="fab fa-whatsapp"></i>
+      </a>
+      <a href="https://instagram.com/yourusername" target="_blank" class="text-pink-500 hover:scale-125 transition">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="https://facebook.com/yourusername" target="_blank" class="text-blue-600 hover:scale-125 transition">
+        <i class="fab fa-facebook"></i>
+      </a>
+    </div>
+    <form action="/contact_submit" method="POST" class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+  
+  <input type="text" name="name" placeholder="Your Name" class="w-full p-3 mb-4 border rounded" required>
+
+  <input type="email" name="email" placeholder="Your Email" class="w-full p-3 mb-4 border rounded" required>
+
+  <textarea name="message" placeholder="Your Message" class="w-full p-3 mb-4 border rounded" required></textarea>
+
+  <button type="submit" class="bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-green-800 transition">
+    Send Message
+  </button>
+
+</form>
+  </div>
+</section>
+<section class="py-16 bg-white">
+  <div class="max-w-6xl mx-auto px-4 text-center">
+    <h2 class="text-3xl font-playfair text-primary mb-6">Our Location</h2>
+    <div class="rounded-xl overflow-hidden shadow-lg">
+      <iframe
+        src="https://www.google.com/maps?q=Aurangabad,Maharashtra&output=embed"
+        width="100%"
+        height="400"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy">
+      </iframe>
+    </div>
+  </div>
+</section>
+<!-- ================= FOOTER ================= -->
+<footer class="bg-primary text-white py-12">
+  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+
+    <div>
+      <h3 class="font-bold text-lg mb-3">Indumai Seeds</h3>
+      <p class="text-gray-300 text-sm">
+        Providing high-quality seeds, fertilizers and fresh dairy products.
+      </p>
+    </div>
+
+    <div>
+      <h3 class="font-bold mb-3">Quick Links</h3>
+      <ul class="space-y-2 text-gray-300 text-sm">
+        <li><a href="/" class="hover:text-secondary">Home</a></li>
+        <li><a href="/about" class="hover:text-secondary">About</a></li>
+        <li><a href="/products" class="hover:text-secondary">Products</a></li>
+        <li><a href="/contact" class="hover:text-secondary">Contact</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="font-bold mb-3">Support</h3>
+      <ul class="space-y-2 text-gray-300 text-sm">
+        <li><a href="/faq" class="hover:text-secondary">FAQ</a></li>
+        <li><a href="/privacy" class="hover:text-secondary">Privacy Policy</a></li>
+        <li><a href="/careers" class="hover:text-secondary">Careers</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="font-bold mb-3">Location</h3>
+      <p class="text-gray-300 text-sm">
+        Aurangabad, Maharashtra<br>
+        India
+      </p>
+    </div>
+
+  </div>
+
+  <div class="text-center text-gray-400 text-sm mt-8">
+    © 2026 Indumai Seeds & Dairymart. All rights reserved.
+  </div>
+</footer>
+<!-- ================= SCROLL TO TOP BUTTON ================= -->
+<div id="scrollTopBtn"><i class="fas fa-chevron-up"></i></div>
+
+<!-- ================= SCRIPTS ================= -->
+<script>
+// Hamburger Toggle
+const menuBtn = document.getElementById("menu-btn");
+const mobileMenu = document.getElementById("mobile-menu");
+
+if(menuBtn){
+  menuBtn.addEventListener("click", () => {
+    mobileMenu.classList.toggle("hidden");
+  });
+}
+const testimonials = [
+  '"Best seeds I ever bought! My tomatoes grew amazingly."',
+  '"Fresh milk delivered every morning. Highly recommended!"',
+  '"Organic fertilizers increased my farm yield."'
+];
+
+let tIndex = 0;
+
+setInterval(() => {
+  tIndex = (tIndex + 1) % testimonials.length;
+  document.getElementById('testimonial-slide').innerText = testimonials[tIndex];
+}, 4000);
+  // Hero Carousel
+  const slides = document.querySelectorAll('.carousel-slide');
+  let currentSlide = 0;
+  setInterval(() => {
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide + 1) % slides.length;
+    slides[currentSlide].classList.add('active');
+  }, 4000);
+
+  // Animated Counters
+  const counters = document.querySelectorAll('.counter');
+  counters.forEach(counter => {
+    const updateCount = () => {
+      const target = +counter.getAttribute('data-target');
+      const count = +counter.innerText;
+      const increment = target / 200;
+      if(count < target){
+        counter.innerText = Math.ceil(count + increment);
+        setTimeout(updateCount, 20);
+      } else {
+        counter.innerText = target;
+      }
+    };
+    updateCount();
+  });
+
+  // Scroll to Top Button
+  const scrollBtn = document.getElementById('scrollTopBtn');
+  window.onscroll = function() {
+    if(document.body.scrollTop > 300 || document.documentElement.scrollTop > 300){
+      scrollBtn.style.display = "block";
+    } else {
+      scrollBtn.style.display = "none";
+    }
+  };
+  scrollBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+
+</body>
+</html> 

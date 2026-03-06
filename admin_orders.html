@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+  <title>Admin - Orders</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+<h1 class="text-3xl font-bold mb-6 text-blue-700">Admin - All Orders</h1>
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="mb-6">
+      {% for category, message in messages %}
+        <div class="bg-green-100 text-green-800 p-3 rounded mb-2">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="space-y-6">
+
+{% for order in orders %}
+<div class="bg-white p-6 rounded-lg shadow">
+
+  <div class="flex justify-between">
+    <div>
+      <p class="font-semibold">Order ID: {{ order.id }}</p>
+      <p>User: {{ order.name }}</p>
+
+      <!-- ✅ STATUS DROPDOWN ADDED HERE -->
+      <p class="mt-2 font-semibold">Update Status:</p>
+      <form method="POST" action="{{ url_for('update_order_status', order_id=order.id) }}" class="mt-2">
+        <select name="status" class="border px-2 py-1 rounded">
+          <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+          <option value="Shipped" {% if order.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+          <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+          <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+        </select>
+
+        <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded ml-2 hover:bg-blue-700">
+          Update
+        </button>
+      </form>
+
+      <p class="mt-2">Total: ₹{{ order.total_amount }}</p>
+      <p>Date: {{ order.created_at }}</p>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <h3 class="font-semibold mb-2">Products:</h3>
+
+  <ul class="list-disc pl-6">
+    {% for item in order.order_items %}
+      <li>
+        {{ item.name }} - Qty: {{ item.quantity }} - ₹{{ item.price }}
+      </li>
+    {% endfor %}
+  </ul>
+
+</div>
+{% endfor %}
+
+</div>
+
+</body>
+</html>
