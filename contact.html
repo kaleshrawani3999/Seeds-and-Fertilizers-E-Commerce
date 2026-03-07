@@ -72,7 +72,7 @@
 <!-- ================= FLASH MESSAGE ================= -->
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <div class="max-w-6xl mx-auto px-4 mb-6">
+   <div class="max-w-6xl mx-auto px-6 mb-6">
       {% for category, message in messages %}
         <div class="bg-green-100 text-green-800 p-4 rounded-lg border border-green-300 mb-3">
           {{ message }}
@@ -162,4 +162,5 @@
 </body>
 
 </html>
+
 
