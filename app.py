@@ -1,3 +1,21 @@
+import smtplib
+from email.mime.text import MIMEText
+
+def send_order_confirmation(user_email, total_amount):
+
+    message = f"Your order has been confirmed successfully! Total Amount: ₹{total_amount}. Thank you for shopping with us."
+
+    msg = MIMEText(message)
+    msg['Subject'] = "Order Confirmation"
+    msg['From'] = "yourgmail@gmail.com"
+    msg['To'] = user_email
+
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login("yourgmail@gmail.com", "your_app_password")
+
+    server.sendmail("yourgmail@gmail.com", user_email, msg.as_string())
+    server.quit()
 from flask import Flask, render_template, request, redirect, flash, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
@@ -495,4 +513,5 @@ def admin_dashboard():
     )
 
 if __name__ == '__main__':
+
     app.run(host="0.0.0.0", port=5000, debug=True)
