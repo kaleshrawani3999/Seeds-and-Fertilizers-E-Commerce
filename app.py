@@ -1,24 +1,11 @@
-import smtplib
-from email.mime.text import MIMEText
+
 from flask import Flask, render_template, request, redirect, flash, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 
 def send_order_confirmation(user_email, total_amount):
 
-    message = f"Your order has been confirmed successfully! Total Amount: ₹{total_amount}. Thank you for shopping with us."
-
-    msg = MIMEText(message)
-    msg['Subject'] = "Order Confirmation"
-    msg['From'] = "kaleshrawani3999@gmail.com"
-    msg['To'] = user_email
-
-    server = smtplib.SMTP("smtp.gmail.com", 587)
-    server.starttls()
-    server.login("kaleshrawani3999@gmail.com", "gcvq lwms dyqa iyit")
-
-    server.sendmail("kaleshrawani3999@gmail.com", user_email, msg.as_string())
-    server.quit()
+   quit()
 
 
 app = Flask(__name__)
