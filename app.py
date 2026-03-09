@@ -1,12 +1,6 @@
-
 from flask import Flask, render_template, request, redirect, flash, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
-
-def send_order_confirmation(user_email, total_amount):
-
-   quit()
-
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
@@ -250,14 +244,6 @@ def checkout():
     # Clear cart
     cursor.execute("DELETE FROM cart WHERE user_id=%s", (user_id,))
     db.commit()
-    # Get user email
-cursor2 = db.cursor()
-cursor2.execute("SELECT email FROM users WHERE id=%s", (user_id,))
-user_email = cursor2.fetchone()[0]
-cursor2.close()
-
-# Send confirmation email
-send_order_confirmation(user_email, total_amount)
     cursor.close()
 
     flash(f"Order placed successfully! Total amount: ₹{total_amount}", "success")
@@ -511,5 +497,3 @@ def admin_dashboard():
 if __name__ == '__main__':
 
     app.run(host="0.0.0.0", port=5000, debug=True)
-
-
