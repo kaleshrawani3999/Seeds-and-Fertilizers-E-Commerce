@@ -17,10 +17,7 @@ db = mysql.connector.connect(
     port=int(os.environ.get("3306", 3306))
 )
 conn = get_db_connection()
-cursor = conn.cursor()
-# ... do your queries
-cursor.close()
-conn.close()
+
 # ---------------- REGISTER ----------------
 @app.route('/register', methods=['GET','POST'])
 def register():
