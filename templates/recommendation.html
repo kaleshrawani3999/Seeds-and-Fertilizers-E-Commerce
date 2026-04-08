@@ -1,0 +1,13 @@
+def get_recommendations(data):
+    import pandas as pd
+    from sklearn.cluster import KMeans
+
+    df = pd.DataFrame(data)
+    df['code'] = df['name'].astype('category').cat.codes
+
+    X = df[['code', 'total']]
+    kmeans = KMeans(n_clusters=3)
+    df['cluster'] = kmeans.fit_predict(X)
+
+    top_cluster = df.groupby('cluster')['total'].sum().idxmax()
+    return df[df['cluster'] == top_cluster]['name'].tolist()
