@@ -137,3 +137,4 @@ INSERT INTO contact (name, email, message)
 VALUES ('Test User', 'test@example.com', 'This is a test message.');
 SELECT * FROM contact;
 show tables;
+
