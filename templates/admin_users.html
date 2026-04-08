@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Registered Users</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-10">
+
+<h1 class="text-3xl font-bold mb-6">Registered Users</h1>
+
+<table class="w-full bg-white shadow rounded">
+
+<tr class="bg-gray-200">
+<th class="p-3">Name</th>
+<th class="p-3">Email</th>
+<th class="p-3">Address</th>
+</tr>
+
+{% for user in users %}
+
+<tr class="border-b">
+<td class="p-3">{{ user.name }}</td>
+<td class="p-3">{{ user.email }}</td>
+<td class="p-3">{{ user.address }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+</html>
