@@ -1,20 +1,139 @@
+import razorpay
 import pandas as pd
 from flask import Flask, render_template, request, redirect, flash, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
+from flask import Flask, jsonify, request
+import os
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
-
+client = razorpay.Client(auth=("rzp_test_SZ5eFb8k70e4QJ", "DLlly6UFMa2Lk93ZjBxpr3Pu"))
 # ---------------- MYSQL CONNECTION HELPER ----------------
 def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="its.pdv.0410",
+        password="root123",
         database="indumai"
     )
+# ---------------- HELPER FUNCTIONS ----------------
 
+def get_product_by_id(product_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM products WHERE id=%s", (product_id,))
+    product = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return product
+
+def get_order(order_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM orders WHERE id=%s", (order_id,))
+    order = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return order
+
+def mark_order_paid(order_id, razorpay_payment_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE orders
+        SET status=%s, razorpay_payment_id=%s
+        WHERE id=%s
+    """, ("paid", razorpay_payment_id, order_id))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    # ---------------- HELPER FUNCTION TO CREATE ORDER IN DB ----------------
+def create_order_in_db(product_id=None, user_id=None, name=None, address=None, contact=None, payment_method=None, quantity=1, cart_items=None, district=None):
+    """
+    If product_id is given -> Buy Now
+    If cart_items is given -> Cart checkout
+    Returns: order_id
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    total_amount = 0
+
+    # Buy Now
+    if product_id:
+        cursor.execute("SELECT * FROM products WHERE id=%s", (product_id,))
+        product = cursor.fetchone()
+        total_amount = float(product[2]) * quantity  # price * qty
+
+    # Cart Checkout
+    elif cart_items:
+        total_amount = sum(float(item['price']) * int(item['quantity']) for item in cart_items)
+
+    # Insert into orders table
+    cursor.execute("""
+        INSERT INTO orders (user_id, total_amount, status, current_location, district)
+        VALUES (%s, %s, %s, %s, %s)
+    """, (user_id, total_amount, 'Pending', 'Processing', district))
+    order_id = cursor.lastrowid
+
+    # Insert order items
+    if product_id:
+        cursor.execute("""
+            INSERT INTO order_items (order_id, product_id, quantity, price)
+            VALUES (%s, %s, %s, %s)
+        """, (order_id, product_id, quantity, product[2]))
+    elif cart_items:
+        for item in cart_items:
+            cursor.execute("""
+                INSERT INTO order_items (order_id, product_id, quantity, price)
+                VALUES (%s, %s, %s, %s)
+            """, (order_id, item['product_id'], item['quantity'], item['price']))
+        # Clear cart
+        cursor.execute("DELETE FROM cart WHERE user_id=%s", (user_id,))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return order_id
+
+
+    @app.route('/recommendations')
+def recommendations():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT products.name, SUM(order_items.quantity) as total
+        FROM order_items
+        JOIN products ON order_items.product_id = products.id
+        GROUP BY products.name
+        ORDER BY total DESC
+    """)
+    data = cursor.fetchall()
+
+    import pandas as pd
+    from sklearn.cluster import KMeans
+
+    df = pd.DataFrame(data)
+
+    if not df.empty:
+        df['code'] = df['name'].astype('category').cat.codes
+        X = df[['code', 'total']]
+
+        kmeans = KMeans(n_clusters=3)
+        df['cluster'] = kmeans.fit_predict(X)
+
+        top_cluster = df.groupby('cluster')['total'].sum().idxmax()
+        recommendations = df[df['cluster'] == top_cluster]['name'].tolist()
+    else:
+        recommendations = []
+
+    cursor.close()
+    conn.close()
+
+    return render_template("recommendations.html", recommendations=recommendations)
 # ---------------- REGISTER ----------------
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -86,8 +205,129 @@ def products():
 
     cursor.close()
     conn.close()
-    return render_template("products.html", products=products_list, cart_count=cart_count)
+    return render_template(
+    "products.html",
+    products=products_list,
+    cart_count=cart_count,
+    is_logged_in=True if session.get('logged_in') else False
+)
+#--------------------RAZORPAY CREATE 0RDER----------
+@app.route("/create_order", methods=["POST"])
+def create_order():
+    data = request.json
+    amount = data.get("amount")  # amount in INR
+    amount_paise = int(amount * 100)  # Razorpay works in paise
 
+    # Create order on Razorpay
+    order = client.order.create({
+        "amount": amount_paise,
+        "currency": "INR",
+        "payment_capture": 1  # auto capture
+    })
+
+    return jsonify({
+        "order_id": order["id"],
+        "razorpay_key": "rzp_test_SZ5eFb8k70e4QJ"
+    })
+
+
+@app.route('/place_order', methods=['POST'])
+def place_order():
+
+    if not session.get('logged_in'):
+        return jsonify({"status": "login_required"})
+
+    name = request.form['name']
+    address = request.form['address']
+    contact = request.form['contact']
+    district = request.form['district']
+    product_id = request.form['product_id']
+    amount = request.form['amount']
+    razorpay_payment_id = request.form['razorpay_payment_id']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO orders (user_id, total_amount, status, current_location, district, razorpay_payment_id)
+        VALUES (%s,%s,%s,%s,%s,%s)
+    """, (
+        session['user_id'],
+        amount,
+        'Paid',
+        'Processing',
+        district,
+        razorpay_payment_id
+    ))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return jsonify({"status": "success"})
+#-------------- Route to confirm payment---------
+@app.route('/confirm_payment/<int:order_id>', methods=['POST'])
+def confirm_payment(order_id):
+    try:
+        razorpay_payment_id = request.form.get('razorpay_payment_id')
+
+        mark_order_paid(order_id, razorpay_payment_id)
+
+        return jsonify({"status": "success"})
+
+    except Exception as e:
+        print("ERROR:", e)
+        return jsonify({"status": "error"})
+#-------------- checkout route---------
+
+@app.route('/checkout/<int:product_id>', methods=['GET', 'POST'])
+def checkout(product_id):
+
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
+    product = get_product_by_id(product_id)
+
+    if request.method == 'POST':
+        name = request.form['name']
+        address = request.form['address']
+        contact = request.form['contact']
+        payment_method = request.form['payment_method']
+        district = request.form['district']
+
+        total_amount = float(product['price'])
+
+        # 👉 Razorpay order create
+        razorpay_order = client.order.create({
+            "amount": int(total_amount * 100),
+            "currency": "INR",
+            "payment_capture": 1
+        })
+
+        # 👉 DB madhe order save (Pending)
+        order_id = create_order_in_db(
+            product_id=product_id,
+            user_id=session['user_id'],
+            name=name,
+            address=address,
+            contact=contact,
+            payment_method=payment_method,
+            district=district
+        )
+
+        return jsonify({
+            "razorpay_order_id": razorpay_order['id'],
+            "amount": razorpay_order['amount'],
+            "order_id": order_id
+        })
+
+    return render_template('checkout.html', product=product, total_amount=product['price'])
+#-------------- Route payment---------
+
+@app.route('/payment/<int:order_id>')
+def payment(order_id):
+    order = get_order(order_id)  # Fetch order details from DB
+    return render_template('payment.html', order=order)
 # ---------------- ADD TO CART ----------------
 @app.route('/add_to_cart/<int:product_id>')
 def add_to_cart(product_id):
@@ -119,45 +359,67 @@ def add_to_cart(product_id):
     cursor.close()
     conn.close()
     return redirect(url_for('cart_page'))
+
 # ---------------- BUY NOW ----------------
 @app.route('/buy_now', methods=['POST'])
 def buy_now():
-
-    # CHECK LOGIN
     if 'user_id' not in session:
         flash("Please login first to buy products.")
         return redirect(url_for('login'))
 
-    user_id = session['user_id']
     product_id = request.form.get('product_id')
-    quantity = int(request.form.get('quantity', 1))
+
+
+    return redirect(url_for('checkout', product_id=product_id))
+
+
+# ---------------- CHECKOUT CART ----------------
+@app.route('/checkout_cart', methods=['GET', 'POST'])
+def checkout_cart():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-
-    cursor.execute(
-        "SELECT quantity FROM cart WHERE user_id=%s AND product_id=%s",
-        (user_id, product_id)
-    )
-
-    existing = cursor.fetchone()
-
-    if existing:
-        cursor.execute(
-            "UPDATE cart SET quantity = quantity + %s WHERE user_id=%s AND product_id=%s",
-            (quantity, user_id, product_id)
-        )
-    else:
-        cursor.execute(
-            "INSERT INTO cart (user_id, product_id, quantity) VALUES (%s,%s,%s)",
-            (user_id, product_id, quantity)
-        )
-
-    conn.commit()
+    cursor.execute("""
+        SELECT cart.product_id, cart.quantity, products.name, products.price, products.image
+        FROM cart
+        JOIN products ON cart.product_id = products.id
+        WHERE cart.user_id=%s
+    """, (session['user_id'],))
+    cart_items = cursor.fetchall()
     cursor.close()
     conn.close()
 
-    return redirect(url_for('cart_page'))
+    if not cart_items:
+        flash("Your cart is empty!", "error")
+        return redirect(url_for('cart_page'))
+
+    total_amount = sum(float(item['price']) * int(item['quantity']) for item in cart_items)
+
+    if request.method == 'POST':
+        name = request.form['name']
+        address = request.form['address']
+        contact = request.form['contact']
+        payment_method = request.form['payment_method']
+        district = request.form['district']
+
+        order_id = create_order_in_db(
+            user_id=session['user_id'],
+            cart_items=cart_items,
+            name=name,
+            address=address,
+            contact=contact,
+            payment_method=payment_method,
+            district=district
+        )
+
+        if payment_method == 'online':
+            return redirect(url_for('payment', order_id=order_id))
+        else:
+            return redirect(url_for('orders'))
+
+    return render_template('checkout.html', cart_items=cart_items, total_amount=total_amount)
 # ---------------- CART PAGE ----------------
 @app.route('/cart')
 def cart_page():
@@ -285,8 +547,8 @@ def wishlist():
     return render_template("wishlist.html", items=items)
 
 # ---------------- CHECKOUT ----------------
-@app.route('/checkout', methods=['POST'])
-def checkout():
+@app.route('/checkout_product', methods=['POST'])
+def checkout_product():
 
     if not session.get('logged_in'):
         return redirect(url_for('login'))
@@ -354,21 +616,25 @@ def orders():
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute("""
-    SELECT 
-        orders.id,
-        orders.created_at,
-        orders.status,
-        order_items.quantity,
-        order_items.price,
-        products.name,
-        products.image,
-        products.id as product_id
-    FROM orders
-    JOIN order_items ON orders.id = order_items.order_id
-    JOIN products ON order_items.product_id = products.id
-    WHERE orders.user_id = %s
-    ORDER BY orders.created_at DESC
-    """, (session['user_id'],))
+SELECT 
+    orders.id,
+    orders.created_at,
+    orders.status,
+    order_items.quantity,
+    order_items.price,
+    products.name,
+    products.image,
+    products.id as product_id,
+    returns.status AS return_status   -- IMPORTANT
+FROM orders
+JOIN order_items ON orders.id = order_items.order_id
+JOIN products ON order_items.product_id = products.id
+LEFT JOIN returns 
+    ON returns.order_id = orders.id 
+    AND returns.product_id = products.id
+WHERE orders.user_id = %s
+ORDER BY orders.created_at DESC
+""", (session['user_id'],))
 
     rows = cursor.fetchall()
 
@@ -386,12 +652,13 @@ def orders():
             }
 
         orders[order_id]["items"].append({
-            "name": row['name'],
-            "price": row['price'],
-            "quantity": row['quantity'],
-            "image": row['image'],
-            "product_id": row['product_id']
-        })
+    "name": row['name'],
+    "price": row['price'],
+    "quantity": row['quantity'],
+    "image": row['image'],
+    "product_id": row['product_id'],
+    "return_status": row['return_status']   # IMPORTANT
+})
 
     cursor.close()
     conn.close()
@@ -464,9 +731,9 @@ def request_return(order_id, product_id):
     cursor = conn.cursor()
 
     cursor.execute("""
-    INSERT INTO returns (order_id, product_id, user_id, reason, type)
-    VALUES (%s,%s,%s,%s,%s)
-    """,(order_id, product_id, session['user_id'], reason, return_type))
+INSERT INTO returns (order_id, product_id, user_id, reason, type, status)
+VALUES (%s,%s,%s,%s,%s,%s)
+""",(order_id, product_id, session['user_id'], reason, return_type, 'pending'))
 
     conn.commit()
 
@@ -497,7 +764,8 @@ def contact():
         conn.close()
 
         flash("Message received successfully!", "success")
-        return redirect(url_for('contact'))
+
+        return redirect('/contact')   # 👈 SIMPLE STRING (fix)
 
     return render_template('contact.html')
 # ---------------- DELETE CONTACT MESSAGE ----------------
@@ -670,6 +938,25 @@ def update_return_status(return_id, status):
 
     return redirect(url_for('admin_returns'))
 
+@app.route('/admin/delete_return/<int:return_id>')
+def delete_return(return_id):
+
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM returns WHERE id=%s", (return_id,))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    flash("Return request deleted successfully!", "success")
+
+    return redirect(url_for('admin_returns'))
+
     
 # ---------------- ADMIN PRODUCTS ----------------
 @app.route("/admin/products")
@@ -747,22 +1034,7 @@ def admin_dashboard():
         total_products=total_products,
         total_users=total_users
     )
-# ---------------- ADMIN CONTACT MESSAGES ----------------
 
-@app.route('/admin_contacts')
-def admin_contacts():
-
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-
-    cursor.execute("SELECT * FROM contact ORDER BY id DESC")
-
-    messages = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
-
-    return render_template("admin_contacts.html", messages=messages)
 # ---------------- SEEDS ANALYSIS ----------------
 @app.route('/seeds_analysis')
 def seeds_analysis():
@@ -848,4 +1120,6 @@ def blog():
 def gallery():
     return render_template('gallery.html')
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+   
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
