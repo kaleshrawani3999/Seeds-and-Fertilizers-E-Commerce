@@ -1,22 +1,19 @@
 import pandas as pd
 from flask import Flask, render_template, request, redirect, flash, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import mysql.connector
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
-import mysql.connector
-import os
-
-db = mysql.connector.connect(
-    host=os.environ.get("mysql.railway.internal"),
-    user=os.environ.get("root"),
-    password=os.environ.get("XTwRxQXLtjgSoAeXQCQyIdlQpbyvaEkZ"),
-    database=os.environ.get("railway"),
-    port=int(os.environ.get("3306", 3306))
-)
-conn = get_db_connection()
+# ---------------- MYSQL CONNECTION HELPER ----------------
+def get_db_connection():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="its.pdv.0410",
+        database="indumai"
+    )
 
 # ---------------- REGISTER ----------------
 @app.route('/register', methods=['GET','POST'])
@@ -89,12 +86,7 @@ def products():
 
     cursor.close()
     conn.close()
-    return render_template(
-    "products.html",
-    products=products_list,
-    cart_count=cart_count,
-    is_logged_in=True if session.get('logged_in') else False
-)
+    return render_template("products.html", products=products_list, cart_count=cart_count)
 
 # ---------------- ADD TO CART ----------------
 @app.route('/add_to_cart/<int:product_id>')
@@ -362,25 +354,21 @@ def orders():
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute("""
-SELECT 
-    orders.id,
-    orders.created_at,
-    orders.status,
-    order_items.quantity,
-    order_items.price,
-    products.name,
-    products.image,
-    products.id as product_id,
-    returns.status AS return_status   -- IMPORTANT
-FROM orders
-JOIN order_items ON orders.id = order_items.order_id
-JOIN products ON order_items.product_id = products.id
-LEFT JOIN returns 
-    ON returns.order_id = orders.id 
-    AND returns.product_id = products.id
-WHERE orders.user_id = %s
-ORDER BY orders.created_at DESC
-""", (session['user_id'],))
+    SELECT 
+        orders.id,
+        orders.created_at,
+        orders.status,
+        order_items.quantity,
+        order_items.price,
+        products.name,
+        products.image,
+        products.id as product_id
+    FROM orders
+    JOIN order_items ON orders.id = order_items.order_id
+    JOIN products ON order_items.product_id = products.id
+    WHERE orders.user_id = %s
+    ORDER BY orders.created_at DESC
+    """, (session['user_id'],))
 
     rows = cursor.fetchall()
 
@@ -398,13 +386,12 @@ ORDER BY orders.created_at DESC
             }
 
         orders[order_id]["items"].append({
-    "name": row['name'],
-    "price": row['price'],
-    "quantity": row['quantity'],
-    "image": row['image'],
-    "product_id": row['product_id'],
-    "return_status": row['return_status']   # IMPORTANT
-})
+            "name": row['name'],
+            "price": row['price'],
+            "quantity": row['quantity'],
+            "image": row['image'],
+            "product_id": row['product_id']
+        })
 
     cursor.close()
     conn.close()
@@ -477,9 +464,9 @@ def request_return(order_id, product_id):
     cursor = conn.cursor()
 
     cursor.execute("""
-INSERT INTO returns (order_id, product_id, user_id, reason, type, status)
-VALUES (%s,%s,%s,%s,%s,%s)
-""",(order_id, product_id, session['user_id'], reason, return_type, 'pending'))
+    INSERT INTO returns (order_id, product_id, user_id, reason, type)
+    VALUES (%s,%s,%s,%s,%s)
+    """,(order_id, product_id, session['user_id'], reason, return_type))
 
     conn.commit()
 
@@ -680,25 +667,6 @@ def update_return_status(return_id, status):
     conn.close()
 
     flash("Return request updated!")
-
-    return redirect(url_for('admin_returns'))
-
-@app.route('/admin/delete_return/<int:return_id>')
-def delete_return(return_id):
-
-    if not session.get('admin_logged_in'):
-        return redirect(url_for('admin_login'))
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("DELETE FROM returns WHERE id=%s", (return_id,))
-    conn.commit()
-
-    cursor.close()
-    conn.close()
-
-    flash("Return request deleted successfully!", "success")
 
     return redirect(url_for('admin_returns'))
 
