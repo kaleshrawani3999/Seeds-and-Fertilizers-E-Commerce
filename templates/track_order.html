@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+
+<title>Track Order</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-gray-100 p-10">
+
+<h1 class="text-3xl font-bold mb-8">
+Order Tracking
+</h1>
+
+<div class="bg-white p-6 rounded shadow">
+
+<p class="mb-2">
+<b>Order ID:</b> {{ order.id }}
+</p>
+
+<p class="mb-2">
+<b>Status:</b> {{ order.status }}
+</p>
+
+<p class="mb-6">
+<b>Current Location:</b> {{ order.current_location }}
+</p>
+
+<!-- Tracking Timeline -->
+
+<div class="space-y-4">
+
+<div class="flex items-center gap-3">
+
+<div class="w-5 h-5 bg-green-500 rounded-full"></div>
+
+<p>Order Placed</p>
+
+</div>
+
+<div class="flex items-center gap-3">
+
+<div class="w-5 h-5 {% if order.status in ['Packed','Shipped','Out for Delivery','Delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %} rounded-full"></div>
+
+<p>Packed</p>
+
+</div>
+
+<div class="flex items-center gap-3">
+
+<div class="w-5 h-5 {% if order.status in ['Shipped','Out for Delivery','Delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %} rounded-full"></div>
+
+<p>Shipped</p>
+
+</div>
+
+<div class="flex items-center gap-3">
+
+<div class="w-5 h-5 {% if order.status in ['Out for Delivery','Delivered'] %}bg-green-500{% else %}bg-gray-300{% endif %} rounded-full"></div>
+
+<p>Out for Delivery</p>
+
+</div>
+
+<div class="flex items-center gap-3">
+
+<div class="w-5 h-5 {% if order.status == 'Delivered' %}bg-green-500{% else %}bg-gray-300{% endif %} rounded-full"></div>
+
+<p>Delivered</p>
+
+</div>
+
+</div>
+
+</div>
+
+<a href="/orders"
+class="mt-6 inline-block bg-green-600 text-white px-6 py-3 rounded hover:bg-green-800">
+
+Back to Orders
+
+</a>
+
+</body>
+</html>
