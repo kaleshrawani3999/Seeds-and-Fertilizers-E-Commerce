@@ -1,103 +1,125 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Cart - Indumai</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Your Cart - Indumai</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
 </head>
-<body class="bg-gray-100 p-10 font-poppins">
+
+<body class="bg-gray-100 p-4 md:p-10 font-sans">
 
 <h1 class="text-3xl font-bold mb-6">Your Cart</h1>
 
 {% if cart_items %}
-<div class="bg-white p-6 rounded shadow">
 
-  <!-- Cart Items -->
-  {% for item in cart_items %}
-  <div class="flex justify-between items-center border-b py-4">
+<div class="bg-white p-6 rounded-lg shadow-md">
 
-    <!-- Product Info -->
-    <div>
-      <h2 class="font-semibold text-lg">{{ item.name }}</h2>
-      <div class="flex items-center gap-3 mt-2">
-        <!-- Decrease -->
-        <form method="POST" action="/update_cart">
-          <input type="hidden" name="product_id" value="{{ item.id }}">
-          <input type="hidden" name="action" value="decrease">
-          <button class="px-3 py-1 bg-gray-300 rounded">-</button>
-        </form>
+<!-- CART ITEMS -->
 
-        <!-- Quantity Display -->
-        <span class="font-semibold">{{ item.quantity }}</span>
+{% for item in cart_items %}
 
-        <!-- Increase -->
-        <form method="POST" action="/update_cart">
-          <input type="hidden" name="product_id" value="{{ item.id }}">
-          <input type="hidden" name="action" value="increase">
-          <button class="px-3 py-1 bg-gray-300 rounded">+</button>
-        </form>
-      </div>
-      <p class="mt-2 text-sm text-gray-600">
-        ₹{{ item.price }} each
-      </p>
-    </div>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between bg-gray-50 p-4 rounded-lg mb-4 shadow-sm hover:shadow-md transition">
 
-    <!-- Price & Remove -->
-    <div class="text-right">
-      <p class="font-bold mb-2">
-        ₹{{ item.price * item.quantity }}
-      </p>
+<!-- LEFT SIDE -->
 
-      <!-- Remove -->
-      <form method="POST" action="/update_cart">
-        <input type="hidden" name="product_id" value="{{ item.id }}">
-        <input type="hidden" name="action" value="remove">
-        <button class="text-red-500 text-sm">Remove</button>
-      </form>
-    </div>
+<div class="flex items-center gap-4">
 
-  </div>
-  {% endfor %}
+<!-- PRODUCT IMAGE -->
 
-  <!-- Total -->
-  <h2 class="text-xl font-bold mt-6">
-    Total: ₹{{ total }}
-  </h2>
+<img src="{{ item.image }}" 
+class="w-20 h-20 object-cover rounded">
 
-  <!-- Payment / Checkout -->
-  <div class="mt-6 bg-gray-50 p-4 rounded">
-    <h2 class="text-lg font-semibold mb-3">Delivery Address:</h2>
-    <form method="POST" action="/checkout" class="space-y-3">
-      <input type="text" name="address" placeholder="Enter your delivery address"
-             class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+<!-- PRODUCT INFO -->
 
-      <h2 class="text-lg font-semibold mb-3">Choose Payment Method:</h2>
-      <label class="flex items-center gap-2">
-        <input type="radio" name="payment_method" value="paytm" checked>
-        Paytm
-      </label>
-      <label class="flex items-center gap-2">
-        <input type="radio" name="payment_method" value="cod">
-        Cash on Delivery
-      </label>
+<div>
 
-      <button type="submit" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-800 w-full">
-        Place Order
-      </button>
-    </form>
-  </div>
+<h2 class="font-semibold text-lg">
+{{ item.name }}
+</h2>
+
+<p class="text-sm text-gray-600 mt-1">
+₹{{ item.price }} each
+</p>
+
+<!-- QUANTITY -->
+
+<div class="flex items-center gap-3 mt-2">
+
+<!-- DECREASE -->
+
+<form method="POST" action="/update_cart">
+<input type="hidden" name="product_id" value="{{ item.id }}">
+<input type="hidden" name="action" value="decrease">
+
+<button class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-400 font-bold">
+-
+</button>
+
+</form>
+
+<!-- QUANTITY -->
+
+<span class="font-semibold">
+{{ item.quantity }}
+</span>
+
+<!-- INCREASE -->
+
+<form method="POST" action="/update_cart">
+<input type="hidden" name="product_id" value="{{ item.id }}">
+<input type="hidden" name="action" value="increase">
+
+<button class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-400 font-bold">
++
+</button>
+
+</form>
 
 </div>
-{% else %}
-<p>Your cart is empty.</p>
+
+</div>
+
+</div>
+
+<!-- RIGHT SIDE -->
+
+<div class="md:text-right mt-3 md:mt-0">
+
+<p class="font-bold text-lg mb-2">
+₹{{ item.price * item.quantity }}
+</p>
+
+<form method="POST" action="/update_cart">
+<input type="hidden" name="product_id" value="{{ item.id }}">
+<input type="hidden" name="action" value="remove">
+
+<button class="text-red-500 text-sm hover:text-red-700 font-semibold">
+Remove
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+<!-- TOTAL -->
+
+<h2 class="text-2xl font-bold mt-6 text-right text-green-700">
+Total: ₹{{ total }}
+</h2>
+
+
+<!-- CONTINUE SHOPPING -->
+
+<a href="/products" class="btn btn-success">Continue Shopping</a>
 {% endif %}
-
-<!-- Continue Shopping -->
-<a href="/products"
-   class="mt-6 inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-800">
-   Continue Shopping
-</a>
-
 </body>
 </html>
