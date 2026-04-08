@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body class="bg-cream p-6">
+
+<h2 class="text-2xl font-bold mb-4">Pay for Order #{{ order.id }}</h2>
+
+<p class="mb-4">Amount: ₹{{ order.amount }}</p>
+
+<button id="payButton" class="bg-green-600 text-white px-4 py-2 rounded">Pay Now</button>
+
+<script>
+document.getElementById('payButton').onclick = function() {
+
+    fetch('/create_order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `amount=${{{ order.amount * 100 }}}`  // amount in paise
+    })
+    .then(res => res.json())
+    .then(orderData => {
+
+        var options = {
+            "key": "rzp_test_SX2a0NfJhFcUFS",  // Replace with your Razorpay key
+            "amount": orderData.amount,
+            "currency": "INR",
+            "name": "Indumai Store",
+            "description": "Purchase",
+            "order_id": orderData.id,
+            "handler": function (response){
+                // After successful payment, mark order as paid
+                fetch(`/confirm_payment/${order.id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `razorpay_payment_id=${response.razorpay_payment_id}`
+                })
+                .then(() => {
+                    alert("Payment Successful!");
+                    window.location.href="/orders";
+                });
+            },
+            "theme": { "color": "#2D5A27" }
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+
+    });
+
+}
+</script>
+
+</body>
+</html>
