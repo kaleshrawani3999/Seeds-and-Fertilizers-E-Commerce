@@ -1,0 +1,43 @@
+<h2>Return / Exchange Requests</h2>
+
+<table border="1" cellpadding="10">
+<tr>
+<th>User</th>
+<th>Product</th>
+<th>Reason</th>
+<th>Type</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+{% for r in returns %}
+
+<tr>
+<td>{{ r.name }}</td>
+<td>{{ r.product_name }}</td>
+<td>{{ r.reason }}</td>
+<td>{{ r.type }}</td>
+<td>{{ r.status }}</td>
+
+<td>
+<a href="{{ url_for('update_return_status', return_id=r.id, status='accepted') }}"
+   class="bg-green-500 text-white px-2 py-1 rounded">
+   Accept
+</a>
+
+<a href="{{ url_for('update_return_status', return_id=r.id, status='rejected') }}"
+   class="bg-yellow-500 text-white px-2 py-1 rounded">
+   Reject
+</a>
+
+<a href="{{ url_for('delete_return', return_id=r.id) }}"
+   class="bg-red-500 text-white px-2 py-1 rounded"
+   onclick="return confirm('Delete this request?')">
+   Delete
+</a>
+</td>
+</tr>
+
+{% endfor %}
+
+</table>
