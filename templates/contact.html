@@ -52,6 +52,7 @@
         <a href="{{ url_for('about') }}" class="text-white hover:text-secondary">About</a>
         <a href="{{ url_for('products') }}" class="text-white hover:text-secondary">Products</a>
         <a href="{{ url_for('gallery') }}" class="text-white hover:text-secondary">Gallery</a>
+          <a href="{{ url_for('blog') }}" class="text-white hover:text-secondary">Blog</a>
         <a href="{{ url_for('contact') }}" class="text-secondary font-semibold">Contact</a>
       </div>
 
@@ -89,7 +90,7 @@
     <div class="bg-white p-8 rounded-xl shadow-lg">
       <h2 class="text-2xl font-semibold text-primary mb-6">Send Us a Message</h2>
 
-      <form action="{{ url_for('contact') }}" method="POST" class="space-y-4">
+        <form action="{{ url_for('contact') }}" method="POST">
         <input type="text" name="name" placeholder="Your Name"
                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
 
@@ -162,5 +163,3 @@
 </body>
 
 </html>
-
-
