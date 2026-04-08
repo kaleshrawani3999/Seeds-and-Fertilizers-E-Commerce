@@ -1,106 +1,164 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Products - Indumai Seeds & Dairymart</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#2D5A27',
-            secondary: '#F4A460',
-            cream: '#FFF8DC'
-          }
-        }
-      }
-    }
-  </script>
+<title>Products - Indumai Seeds & Dairymart</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#2D5A27',
+secondary: '#F4A460',
+cream: '#FFF8DC'
+}
+}
+}
+}
+</script>
+
 </head>
 
 <body class="bg-cream">
 
-<!-- ================= NAVBAR ================= -->
-<nav class="bg-primary text-white p-4 flex justify-between items-center">
-  <a href="/" class="text-xl font-bold">Indumai Products</a>
-  <div class="flex items-center gap-6">
-    <a href="/" class="hover:text-secondary">Home</a>
-    <a href="/about" class="hover:text-secondary">About</a>
-    <a href="/products" class="text-white hover:text-secondary">Products</a>
-    <a href="/gallery" class="hover:text-secondary">Gallery</a>
-    <a href="/blog" class="hover:text-secondary">Blog</a>
-    <a href="/contact" class="hover:text-secondary">Contact</a>
-    <a href="/cart" class="text-xl">🛒</a>
-  </div>
-</nav>
 
-<!-- ================= CATEGORY FILTER ================= -->
-<div class="p-6 flex gap-4 justify-center flex-wrap bg-white">
-  <button onclick="filterCategory('all')" class="px-4 py-2 bg-primary text-white rounded">All</button>
-  <button onclick="filterCategory('seeds')" class="px-4 py-2 border rounded">Seeds</button>
-  <button onclick="filterCategory('fertilizers')" class="px-4 py-2 border rounded">Fertilizers</button>
-  <button onclick="filterCategory('dairy')" class="px-4 py-2 border rounded">Dairy</button>
-  <button onclick="filterCategory('vegetables')" class="px-4 py-2 border rounded">Vegetables</button>
+<!-- NAVBAR -->
+<div class="bg-primary text-white p-4 flex justify-between items-center">
+
+    <!-- LOGO -->
+    <div class="flex items-center gap-3">
+        <img src="/static/images/logo.png" alt="Logo" class="h-10 w-10 rounded-full">
+        <h1 class="text-xl font-bold">Indumai</h1>
+    </div>
+
+    <div class="flex gap-4 items-center">
+
+        <a href="/" class="hover:text-secondary">Home</a>
+        <a href="/products" class="hover:text-secondary">Products</a>
+        <a href="/cart" class="hover:text-secondary">Cart</a>
+        <a href="/orders" class="hover:text-secondary">Orders</a>
+
+        {% if session.get('logged_in') %}
+            <a href="/logout" class="bg-red-500 px-3 py-1 rounded hover:bg-red-600">
+                Logout
+            </a>
+        {% else %}
+            <a href="/login" class="bg-green-500 px-3 py-1 rounded">
+                Login
+            </a>
+        {% endif %}
+
+    </div>
 </div>
 
-<!-- ================= PRODUCTS GRID ================= -->
-<div id="products-container" class="grid md:grid-cols-3 gap-6 p-8"></div>
+<!-- SEARCH BAR -->
+<div class="bg-white p-6 flex justify-center">
+<input
+type="text"
+id="searchInput"
+placeholder="Search seeds, fertilizers..."
+class="border p-3 rounded w-full max-w-md shadow"
+onkeyup="searchProducts()">
+</div>
 
-<!-- ================= JAVASCRIPT ================= -->
+<!-- CATEGORY FILTER -->
+<div class="p-6 grid grid-cols-2 sm:grid-cols-3 md:flex gap-4 justify-center bg-white">
+
+<button onclick="filterCategory('all')" class="px-4 py-2 bg-primary text-white rounded">All</button>
+<button onclick="filterCategory('seeds')" class="px-4 py-2 border rounded">Seeds</button>
+<button onclick="filterCategory('fertilizers')" class="px-4 py-2 border rounded">Fertilizers</button>
+<button onclick="filterCategory('dairy')" class="px-4 py-2 border rounded">Dairy</button>
+<button onclick="filterCategory('vegetables')" class="px-4 py-2 border rounded">Vegetables</button>
+
+</div>
+
+<!-- PRODUCTS GRID -->
+<div id="products-container"
+class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4 max-w-7xl mx-auto"></div>
+
 <script>
-  const productsData = {{ products|tojson }};
+const productsData = JSON.parse('{{ products | tojson | safe }}');
+const isLoggedIn = {{ 'true' if is_logged_in else 'false' }};
+let currentProducts = productsData;
 
-  function renderProducts(data){
-    const container = document.getElementById("products-container"); 
+function renderProducts(data){
+    const container = document.getElementById("products-container");
     container.innerHTML = "";
 
-    data.forEach(product=>{
-      container.innerHTML += `
-        <div class="bg-white p-4 rounded shadow">
-          <img src="${product.image}" class="h-40 w-full object-cover mb-4 rounded">
-          <h3 class="font-bold text-lg">${product.name}</h3>
-          <p class="text-green-700 font-semibold">₹${product.price}</p>
+    data.forEach(product => {
+        container.innerHTML += `
+        <div class="bg-white p-3 rounded-xl shadow hover:shadow-xl transition relative">
 
-          <div class="flex gap-2 mt-3">
-            <a href="/add_to_cart/${product.id}"
-               class="bg-primary text-white px-4 py-2 rounded flex-1 text-center">
-              Add to Cart
-            </a>
+            <!-- WISHLIST -->
+            <button onclick="toggleWishlist(${product.id}, this)"
+            class="absolute top-2 right-2 bg-white p-2 rounded-full shadow text-xl hover:bg-red-100">
+            🤍
+            </button>
 
-            <form method="POST" action="/buy_now" class="flex-1">
-              <input type="hidden" name="product_id" value="${product.id}">
-              <input type="hidden" name="quantity" value="1">
-              <button type="submit"
-                class="bg-green-600 text-white px-4 py-2 rounded w-full hover:bg-green-800">
-                Buy Now
-              </button>
-            </form>
-          </div>
+            <img src="${product.image}" class="h-52 w-full object-cover mb-2 rounded">
+
+            <h3 class="font-bold text-sm">${product.name}</h3>
+
+            <p class="text-green-700 font-semibold">₹${product.price}</p>
+
+            <div class="text-yellow-400 text-sm mb-2">⭐⭐⭐⭐☆</div>
+
+            <div class="flex gap-2 mt-3">
+
+            ${isLoggedIn ? `
+                <a href="/add_to_cart/${product.id}" class="bg-primary text-white px-4 py-2 rounded flex-1 text-center hover:bg-green-900">
+                Add
+                </a>
+
+                <button onclick="window.location.href='/checkout/${product.id}'"
+                class="bg-green-600 text-white px-4 py-2 rounded flex-1">
+                Buy
+                </button>
+            ` : `
+                <a href="/login" class="bg-red-500 text-white px-4 py-2 rounded flex-1 text-center">
+                Login
+                </a>
+            `}
+
+            </div>
         </div>
-      `;
+        `;
     });
-  }
+}
 
-  function filterCategory(category){
+function filterCategory(category){
     if(category === "all"){
-      renderProducts(productsData);
+        currentProducts = productsData;
     } else {
-      const filtered = productsData.filter(p=>p.category===category);
-      renderProducts(filtered);
+        currentProducts = productsData.filter(p => p.category === category);
     }
-  }
+    renderProducts(currentProducts);
+}
 
-  const params = new URLSearchParams(window.location.search);
-  const category = params.get("category");
+function searchProducts(){
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const filtered = currentProducts.filter(product =>
+        product.name.toLowerCase().includes(search)
+    );
+    renderProducts(filtered);
+}
 
-  if(category){
-    filterCategory(category);
-  } else {
-    renderProducts(productsData);
-  }
+renderProducts(productsData);
+
+function toggleWishlist(productId, button){
+    fetch(`/toggle_wishlist/${productId}`)
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "added") button.innerHTML = "❤️";
+        else if(data.status === "removed") button.innerHTML = "🤍";
+        else if(data.status === "login_required") window.location.href="/login";
+    });
+}
 </script>
 
 </body>
