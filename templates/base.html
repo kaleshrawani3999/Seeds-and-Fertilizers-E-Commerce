@@ -1,79 +1,123 @@
 <!doctype html>
 <html lang="en" class="h-full">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Indumai{% endblock %}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<title>{% block title %}Indumai Seeds & Dairymart{% endblock %}</title>
 
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            'poppins': ['Poppins', 'sans-serif'],
-            'playfair': ['Playfair Display', 'serif']
-          },
-          colors: {
-            'primary': '#2D5A27',
-            'secondary': '#F4A460',
-            'cream': '#FFF8DC'
-          }
-        }
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        'poppins': ['Poppins','sans-serif'],
+        'playfair': ['Playfair Display','serif']
+      },
+      colors: {
+        'primary':'#2D5A27',
+        'secondary':'#F4A460',
+        'cream':'#FFF8DC'
       }
     }
-  </script>
+  }
+}
+</script>
 
-  <!-- AOS Animation CSS -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
 </head>
 
-<body class="bg-cream font-poppins">
+<body class="bg-cream font-poppins overflow-x-hidden">
 
 <!-- NAVBAR -->
-<nav class="bg-primary text-white relative z-50">
-  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+<nav class="bg-primary text-white shadow-md fixed top-0 left-0 right-0 z-50">
 
-    <div class="font-bold text-xl">
-      Indumai Seeds & Dairymart
-    </div>
+<div class="max-w-6xl mx-auto px-6 py-3 md:py-4 flex justify-between items-center">
 
-    <div class="hidden md:flex space-x-8 font-medium">
-      <a href="/" class="hover:text-secondary transition">Home</a>
-      <a href="/about" class="hover:text-secondary transition">About</a>
-      <a href="/products" class="hover:text-secondary transition">Products</a>
-      <a href="/gallery" class="hover:text-secondary transition">Gallery</a>
-      <a href="/blog" class="hover:text-secondary transition">Blog</a>
-      <a href="/contact" class="hover:text-secondary transition">Contact</a>
-    </div>
+<div class="flex items-center gap-3">
 
-    <!-- Hamburger -->
-    <button id="menu-btn" class="md:hidden text-3xl focus:outline-none">
-      ☰
-    </button>
+<img src="{{ url_for('static', filename='images/logo.png') }}" class="h-10 md:h-12">
 
-  </div>
+<div>
+<h1 class="font-bold text-base md:text-lg">Indumai</h1>
+<p class="text-xs text-secondary">Seeds & Dairymart</p>
+</div>
 
-  </nav>
+</div>
+
+<div class="hidden md:flex space-x-8 font-medium items-center">
+
+<a href="/" class="hover:text-secondary">Home</a>
+<a href="/about" class="hover:text-secondary">About</a>
+<a href="/products" class="hover:text-secondary">Products</a>
+<a href="/gallery" class="hover:text-secondary">Gallery</a>
+<a href="/blog" class="hover:text-secondary">Blog</a>
+<a href="/contact" class="hover:text-secondary">Contact</a>
+
+
+</div>
+
+<button id="menu-btn" class="md:hidden text-3xl">☰</button>
+
+</div>
+
+<div id="mobile-menu" class="hidden flex flex-col bg-primary px-6 pb-6 pt-2 space-y-4 text-lg md:hidden transition-all duration-300">
+
+<a href="/">Home</a>
+<a href="/about">About</a>
+<a href="/products">Products</a>
+<a href="/gallery">Gallery</a>
+<a href="/blog">Blog</a>
+<a href="/contact">Contact</a>
+<a href="/cart">Cart</a>
+<a href="/orders">Orders</a>
+
+</div>
+
+</nav>
+
 <!-- PAGE CONTENT -->
+<div class="pt-24">
 {% block content %}{% endblock %}
+</div>
 
-<!-- AOS Script -->
+<!-- FOOTER -->
+
+<footer class="bg-primary text-white py-10 mt-16">
+
+<div class="max-w-7xl mx-auto text-center">
+
+<h3 class="font-bold text-lg">Indumai Seeds & Dairymart</h3>
+
+<p class="text-gray-300 mt-2">
+Growing Together, Prospering Forever
+</p>
+
+<p class="text-gray-400 text-sm mt-4">
+© 2024 Indumai. All rights reserved.
+</p>
+
+</div>
+
+</footer>
+
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  const btn = document.getElementById("menu-btn");
-  const menu = document.getElementById("mobile-menu");
 
-  if(btn && menu){
-    btn.addEventListener("click", function(){
-      menu.classList.toggle("hidden");
-    });
-  }
-});
+AOS.init();
+
+const btn = document.getElementById("menu-btn");
+const menu = document.getElementById("mobile-menu");
+
+btn.addEventListener("click",()=>{
+menu.classList.toggle("hidden");
+})
+
 </script>
+
 </body>
 </html>
