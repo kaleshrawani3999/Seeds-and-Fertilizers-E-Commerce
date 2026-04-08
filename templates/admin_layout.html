@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="flex">
+
+<!-- Sidebar -->
+<div class="w-64 bg-blue-800 text-white min-h-screen p-5">
+
+<h2 class="text-2xl font-bold mb-6">Admin Panel</h2>
+
+<a href="/admin/dashboard" class="block py-2">📊 Dashboard</a>
+<a href="/admin/orders" class="block py-2">🛒 Orders</a>
+<a href="/admin/products" class="block py-2">📦 Manage Products</a>
+<a href="/seeds_analysis" class="block py-2">🌱 Seeds Analysis</a>
+<a href="/admin" class="block py-2">💬 Contact Messages</a>
+<a href="/logout" class="block py-2 text-red-300">🚪 Logout</a>
+
+</div>
+
+<!-- Page Content -->
+<div class="flex-1 p-8">
+
+{% block content %}
+
+{% endblock %}
+
+</div>
+
+</div>
+
+</body>
+</html>
