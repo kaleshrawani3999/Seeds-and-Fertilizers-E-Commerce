@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Seed Sales Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+<div class="flex min-h-screen">
+
+<!-- Sidebar -->
+<div class="w-64 bg-blue-800 text-white p-6">
+
+<h2 class="text-2xl font-bold mb-8">Admin Panel</h2>
+
+<nav class="space-y-3">
+
+<a href="/admin/dashboard" class="block px-4 py-2 rounded hover:bg-blue-600">
+📊 Dashboard
+</a>
+
+<a href="/admin/orders" class="block px-4 py-2 rounded hover:bg-blue-600">
+🛒 Orders
+</a>
+
+<a href="/admin/products" class="block px-4 py-2 rounded hover:bg-blue-600">
+📦 Manage Products
+</a>
+
+<a href="/seeds_analysis" class="block px-4 py-2 rounded bg-purple-600">
+🌱 Seeds Analysis
+</a>
+
+<a href="/admin/messages" class="block px-4 py-2 rounded hover:bg-blue-600">
+💬 Contact Messages
+</a>
+
+<a href="/logout" class="block px-4 py-2 rounded bg-red-500 hover:bg-red-600">
+🚪 Logout
+</a>
+
+</nav>
+
+</div>
+
+<!-- Main Content -->
+<div class="flex-1 p-8">
+
+<h1 class="text-3xl font-bold mb-8 text-gray-700">
+🌱 Seed Sales Analytics
+</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+<!-- District Table -->
+<div class="bg-white p-5 rounded-xl shadow">
+
+<h2 class="font-semibold mb-3 text-gray-600">
+District Wise Sales
+</h2>
+
+<table class="w-full text-sm">
+
+<tr class="border-b">
+<th class="p-2 text-left">District</th>
+<th class="p-2 text-left">Seeds Sold</th>
+</tr>
+
+{% for row in district_data %}
+<tr class="border-b">
+<td class="p-2">{{ row.district }}</td>
+<td class="p-2 font-semibold">{{ row.total_sold }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+<!-- District Chart -->
+<div class="bg-white p-5 rounded-xl shadow">
+
+<h2 class="font-semibold mb-3 text-gray-600">
+District Demand
+</h2>
+
+<canvas id="districtChart"></canvas>
+
+</div>
+
+<!-- Top Seeds -->
+<div class="bg-white p-5 rounded-xl shadow">
+
+<h2 class="font-semibold mb-3 text-gray-600">
+Top Selling Seeds
+</h2>
+
+<canvas id="productChart"></canvas>
+
+</div>
+
+<!-- Pie Chart -->
+<div class="bg-white p-5 rounded-xl shadow">
+
+<h2 class="font-semibold mb-3 text-gray-600">
+Market Share
+</h2>
+
+<canvas id="pieChart"></canvas>
+
+</div>
+
+</div>
+
+<!-- SALES HEATMAP -->
+<div class="bg-white p-6 rounded-xl shadow mt-10">
+
+<h2 class="text-xl font-bold mb-6 text-center">
+Maharashtra Demand Heatmap
+</h2>
+
+<div class="grid grid-cols-3 md:grid-cols-6 gap-4 text-center">
+
+{% for row in district_data %}
+
+<div class="p-4 rounded-lg text-white
+{% if row.total_sold > 50 %}
+bg-red-500
+{% elif row.total_sold > 20 %}
+bg-yellow-400
+{% else %}
+bg-green-500
+{% endif %}
+">
+
+<p class="font-bold">{{ row.district }}</p>
+<p>{{ row.total_sold }} sales</p>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<div class="text-sm text-gray-600 mt-4 text-center">
+
+🔴 High Demand  
+🟡 Medium Demand  
+🟢 Low Demand
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const districtLabels = JSON.parse('{{ districts | tojson | safe }}');
+const districtSales = JSON.parse('{{ district_sales | tojson | safe }}');
+
+const productLabels = JSON.parse('{{ products | tojson | safe }}');
+const productSales = JSON.parse('{{ product_sales | tojson | safe }}');
+
+new Chart(document.getElementById("districtChart"), {
+type: "bar",
+data: {
+labels: districtLabels,
+datasets: [{
+label: "Seeds Sold",
+data: districtSales,
+backgroundColor: "#2563eb"
+}]
+}
+});
+
+new Chart(document.getElementById("productChart"), {
+type: "bar",
+data: {
+labels: productLabels,
+datasets: [{
+label: "Top Seeds",
+data: productSales,
+backgroundColor: "#16a34a"
+}]
+}
+});
+
+new Chart(document.getElementById("pieChart"), {
+type: "pie",
+data: {
+labels: districtLabels,
+datasets: [{
+data: districtSales,
+backgroundColor: [
+"#2563eb",
+"#16a34a",
+"#f59e0b",
+"#ef4444",
+"#9333ea",
+"#14b8a6"
+]
+}]
+}
+});
+
+</script>
+
+</body>
+</html>
